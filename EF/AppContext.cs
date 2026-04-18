@@ -17,6 +17,8 @@ namespace G1WEB.EF
         {
             string connectionString = "Server=localhost;Database=isga2026;User=root";
             optionsBuilder.UseMySQL(connectionString);
+          //  optionsBuilder.LogTo(Console.WriteLine);
+
         }
 
 

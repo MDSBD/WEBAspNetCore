@@ -1,29 +1,31 @@
 ﻿@model Categorie
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "EDIT";
 }
 
-<h1>Créer une catégorie</h1>
+<h1>Edit une catégorie</h1>
 
-<form asp-action="Create" method="post">
-   
+<form asp-action="Edit" method="post">
+
     <div class="form-group">
         <label asp-for="Nom" class="control-label"></label>
-        <input asp-for="Nom"  class="form-control" />
+        <input asp-for="Nom" class="form-control" value="@Model.Nom"/>
         <span asp-validation-for="Nom" class="text-danger"></span>
     </div>
     <div class="form-group">
         <label asp-for="Description" class="control-label"></label>
-        <textarea asp-for="Description" class="form-control"></textarea>
+        <textarea asp-for="Description" class="form-control" >
+            @Model.Description
+        </textarea>
         <span asp-validation-for="Description" class="text-danger"></span>
     </div>
     <div class="form-group">
         <label asp-for="Image" class="control-label"></label>
-        <input asp-for="Image" class="form-control" />
+        <input asp-for="Image" class="form-control" value="@Model.Image" />
         <span asp-validation-for="Image" class="text-danger"></span>
     </div>
-    <button type="submit" class="btn btn-primary">Créer</button>
+    <button type="submit" class="btn btn-primary">Modifier</button>
     <a asp-action="Index" class="btn btn-secondary">Annuler</a>
 </form>
 

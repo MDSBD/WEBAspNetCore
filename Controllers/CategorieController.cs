@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using G1WEB.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using G1WEB.Models;
+using Microsoft.EntityFrameworkCore;
 namespace G1WEB.Controllers
 {
     public class CategorieController : Controller
@@ -8,10 +9,14 @@ namespace G1WEB.Controllers
         // GET: HomeController1
         public ActionResult Index()
         {
+            using(var context = new EF.AppContext())
+            {
+                var categories = context.Categories.ToList();
+                return View(categories);
+            }
 
-        
 
-            return View();
+           // return View();
         }
 
         // GET: HomeController1/Details/5
@@ -29,45 +34,90 @@ namespace G1WEB.Controllers
         // POST: HomeController1/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(Categorie c)
         {
-           string nom= collection.TryGetValue("nom", out var nomValue) ? nomValue.ToString() : string.Empty;
-                string description = collection.TryGetValue("description", out var descriptionValue) ? descriptionValue.ToString() : string.Empty;
-    
-            //add cat to db;
-
-                Categorie categorie = new Categorie
+            
+            if (ModelState.IsValid)
+            {
+                using (var context = new EF.AppContext())
                 {
-                    Nom = nom,
-                    Description = description
-                    
-                };
 
-            try
-            {
-                return 
-                    RedirectToAction(nameof(Index),categorie);
+                    context.Categories.Add(c);
+
+                     context.SaveChanges();
+
+                    
+
+                    return RedirectToAction(nameof(Index));
+                }
+              
             }
-            catch
+            else
             {
-                return View();
+                return View(c); 
             }
+               
+            
         }
 
         // GET: HomeController1/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            try
+            {
+                using (var context = new EF.AppContext())
+                {
+                    var categorie = context.Categories.Find(id);
+                    if (categorie != null)
+                    {
+                        return View(categorie);
+                    }
+                    else
+                    {
+                        return NotFound();
+                    }
+
+                }
+              
+            }
+            catch
+            {
+                return View();
+            }
+
+           
         }
 
         // POST: HomeController1/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, Categorie categorie )
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                using (var context = new EF.AppContext())
+                {
+                    var c = context.Categories.Find(id);
+                    if (c != null)
+                    {
+                       
+                       c.Nom = categorie.Nom;
+                       c.Description = categorie.Description;
+                       c.Image = categorie.Image;
+                       
+                        context.Entry(c).State = EntityState.Modified;
+                        context.Categories.Update(c);
+                        context.SaveChanges();
+
+                        return RedirectToAction(nameof(Index));
+                    }
+                    else
+                    {
+                        return NotFound();
+                    }
+
+                }
+
             }
             catch
             {
@@ -78,7 +128,23 @@ namespace G1WEB.Controllers
         // GET: HomeController1/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            try
+            {
+                using (var context = new EF.AppContext())
+                {
+                    var categorie = context.Categories.Find(id);
+                    if (categorie != null)
+                    {
+                        context.Categories.Remove(categorie);
+                        context.SaveChanges();
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return NotFound()  ;
+            }
         }
 
         // POST: HomeController1/Delete/5
@@ -88,6 +154,15 @@ namespace G1WEB.Controllers
         {
             try
             {
+                    using (var context = new EF.AppContext())
+                    {
+                        var categorie = context.Categories.Find(id);
+                        if (categorie != null)
+                        {
+                            context.Categories.Remove(categorie);
+                            context.SaveChanges();
+                        }
+                }
                 return RedirectToAction(nameof(Index));
             }
             catch
